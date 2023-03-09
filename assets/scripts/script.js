@@ -7,37 +7,51 @@ function writePassword() {
   var passwordText = document.querySelector("#password");
 
   passwordText.value = password;
-
 }
 
 // Add event listener to generate button
 generateBtn.addEventListener("click", writePassword);
 
+// create variable for number of user-desired characters in password
+var numOfPassChars;
 
-var passArray = [];
-var lowercase = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"];
-var uppercase = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"];
-var numeric = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "0"];
-var specialChars = [" ", "!", '"', "#", "$", "%", "&", "'", "(", ")", "*", "+", ",", "-", ".", "/", ":", ";", "<", "=", ">", "?", "@", "[", "\u{005C}", "\u{005D}", "^", "_", "`", "\u{007B}", "|", "\u{007D}", "~"];
+// create empty array for potential character collection from prompts
+potentialCharsArray = [];
 
-var upperBool;
-var lowerBool;
-var numBool;
-var specialBool;
-
-function generatePassword() {
-  getPassLength();
-  getUpperCase();
-  getLowerCase();
-  getNumeric();
-  getSpecialChars();
+// Create objects for each potential character type; bool used in final confirm, query in character selection confirm, and array for password generation
+var uppercase = {
+  bool: false,
+  query: "Would you like your password to contain uppercase letters?",
+  array: ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"],
 }
 
-function getPassLength() {
-  var numsQuery = prompt ("Choose a length for your password from 8-128 characters.");
+var lowercase = {
+  bool: false,
+  query: "Would you like your password to contain lowercase letters?",
+  array: ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"],
+}
 
-    if (8 <= numsQuery && numsQuery <= 128) {
-      return numsQuery;
+var numeric = {
+  bool: false,
+  query: "Would you like your password to contain numbers?",
+  array:["1", "2", "3", "4", "5", "6", "7", "8", "9", "0"],
+}
+
+var special = {
+  bool: false,
+  query: "Would you like your password to contain special characters?",
+  array: [" ", "!", '"', "#", "$", "%", "&", "'", "(", ")", "*", "+", ",", "-", ".", "/", ":", ";", "<", "=", ">", "?", "@", "[", "\u{005D}", "^", "_", "`", "\u{007B}", "|", "\u{007D}", "~"],
+}
+
+//Create object array used in for-loop to determine what characters will be in password
+objArray = [uppercase, lowercase, numeric, special]
+
+// Get desired length for password from user; repeat function if answer outside of bounds
+function getPassLength() {
+  numOfPassChars = prompt ("Choose a length for your password from 8-128 characters.");
+
+    if (8 <= numOfPassChars && numOfPassChars <= 128) {
+      return numOfPassChars;
     }
     else {
       alert("Sorry. The length must be from 8-128 characters. Please try again.")
@@ -45,58 +59,26 @@ function getPassLength() {
     }
 }
 
-// TODO Use Confrim instead of prompt
-function getUpperCase() {
-  var uppsQuery = prompt ("Would you like your password to have uppercase letters? Type 'y' for yes or 'n' for no.");
-  uppsQuery = uppsQuery.toUpperCase();
-  if (uppsQuery === "Y") {
-    passArray.push(uppercase);
-    console.log(passArray);
-  } else if (uppsQuery === "N") {
-  } else {
-    alert("Sorry. That's an invalid answer. Please type 'y' for yes or 'n' for no.")
-    getUpperCase();
+// Presents users a confirm for character type. If reply "okay," adds character type into Potential Chars Array, and sets bool for type to true (referenced in final Confirm).
+function addToArrayConfirm(object) {
+  var bool = confirm (object.query);
+  if (bool === true) {
+    potentialCharsArray.push(object.array);
   }
+  object.bool = bool;
 }
 
-// TODO Use Confrim instead of prompt
-function getLowerCase() {
-  var lowerQuery = prompt ("Would you like your password to have lowercase letters? Type 'y' for yes or 'n' for no.");
-  lowerQuery = lowerQuery.toUpperCase();
-  if (lowerQuery === "Y") {
-    passArray.push(lowercase);
-    console.log(passArray);
-  } else if (lowerQuery === "N") {
-  } else {
-    alert("Sorry. That's an invalid answer. Please type 'y' for yes or 'n' for no.")
-    getLowerCase();
-  }
-}
+// Generates random password
+function generatePassword() {
+  getPassLength();
 
-// TODO Use Confrim instead of prompt
-function getNumeric() {
-  var numQuery = prompt ("Would you like your password to have numbers? Type 'y' for yes or 'n' for no.");
-  numQuery = numQuery.toUpperCase();
-  if (numQuery === "Y") {
-    passArray.push(numeric);
-    console.log(passArray);
-  } else if (numQuery === "N") {
-  } else {
-    alert("Sorry. That's an invalid answer. Please type 'y' for yes or 'n' for no.")
-    getNumeric();
+  for (i=0; i < objArray.length; i++) {
+    addToArrayConfirm(objArray[i]);
   }
-}
+  console.log(potentialCharsArray);
 
-// TODO Use Confrim instead of prompt
-function getSpecialChars() {
-  var specialQuery = prompt ("Would you like your password to have special characters? Type 'y' for yes or 'n' for no.");
-  specialQuery = specialQuery.toUpperCase();
-  if (specialQuery === "Y") {
-    passArray.push(specialChars);
-    console.log(passArray);
-  } else if (specialQuery === "N") {
-  } else {
-    alert("Sorry. That's an invalid answer. Please type 'y' for yes or 'n' for no.")
-    getSpecialChars();
+  // If user responds "cancel" to all confirms, then cancels function.
+  if (uppercase.bool === false && lowercase.bool === false && special.bool === false && numeric.bool === false) {
+    confirm("Sorry. You must select at least one character type. Please try again.")
   }
 }
