@@ -56,16 +56,16 @@ var special = {
 function getPassLength() {
   numOfPassChars = prompt ("Choose a length for your password from 8-128 characters.");
 
-    if (8 <= numOfPassChars && numOfPassChars <= 128) {
-      return numOfPassChars;
-    }
-    else if (numOfPassChars === null) {
-      return defaultBoxMsg;
-    }
-    else {
-      alert("Sorry. The length must be from 8-128 characters. Please try again.")
-      getPassLength();
-    }
+  if (8 <= numOfPassChars && numOfPassChars <= 128) {
+    return numOfPassChars;
+  }
+  else if (numOfPassChars === null) {
+    return defaultBoxMsg;
+  }
+  else {
+    alert("Sorry. The length must be from 8-128 characters. Please try again.")
+    getPassLength();
+  }
 }
 
 /* Presents users a confirm for character type. If user reply "okay," adds character type into Potential Chars Array, and sets bool for type to true 
@@ -132,7 +132,7 @@ function generatePassword() {
   }
 
   // Reset all bools and arrays, so function can be run again without page reload. 
-resetApp();
+  resetApp();
 
   return randomPassword;
 }
